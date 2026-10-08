@@ -1,0 +1,2135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>DriverGuard AI</title>
+
+
+<style>
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    font-family:
+        Inter,
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background:
+        radial-gradient(
+            circle at top right,
+            #172554,
+            #020617 45%
+        );
+
+    color: #f8fafc;
+
+    min-height: 100vh;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.header {
+
+    padding: 20px 30px;
+
+    background:
+        rgba(15, 23, 42, 0.88);
+
+    backdrop-filter: blur(12px);
+
+    border-bottom:
+        1px solid rgba(148,163,184,0.15);
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 100;
+}
+
+
+.logo-area h1 {
+
+    margin: 0;
+
+    font-size: 25px;
+
+    letter-spacing: -0.5px;
+}
+
+
+.logo-area p {
+
+    margin: 5px 0 0;
+
+    color: #94a3b8;
+
+    font-size: 13px;
+}
+
+
+.system-status {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding:
+        8px 14px;
+
+    border-radius: 30px;
+
+    background: #111827;
+
+    border:
+        1px solid #334155;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+
+.status-dot {
+
+    width: 9px;
+
+    height: 9px;
+
+    border-radius: 50%;
+
+    background: #ef4444;
+}
+
+
+.system-status.connected .status-dot {
+
+    background: #22c55e;
+
+    box-shadow:
+        0 0 12px #22c55e;
+}
+
+
+/* =========================================================
+   CONTAINER
+   ========================================================= */
+
+.container {
+
+    max-width: 1600px;
+
+    margin: auto;
+
+    padding: 25px;
+}
+
+
+/* =========================================================
+   MAIN GRID
+   ========================================================= */
+
+.main-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(550px, 1.7fr)
+        minmax(380px, 1fr);
+
+    gap: 20px;
+}
+
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.card {
+
+    background:
+        rgba(15, 23, 42, 0.82);
+
+    border:
+        1px solid rgba(148,163,184,0.14);
+
+    border-radius: 18px;
+
+    padding: 18px;
+
+    box-shadow:
+        0 15px 40px
+        rgba(0,0,0,0.25);
+
+    backdrop-filter: blur(10px);
+}
+
+
+.card-title {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 15px;
+
+    font-size: 16px;
+
+    font-weight: 700;
+}
+
+
+.card-subtitle {
+
+    color: #64748b;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   CAMERA
+   ========================================================= */
+
+.camera-container {
+
+    position: relative;
+
+    background: #000;
+
+    border-radius: 14px;
+
+    overflow: hidden;
+}
+
+
+.camera-container img {
+
+    width: 100%;
+
+    display: block;
+
+    min-height: 450px;
+
+    object-fit: cover;
+}
+
+
+.live-badge {
+
+    position: absolute;
+
+    top: 15px;
+
+    left: 15px;
+
+    padding:
+        6px 11px;
+
+    border-radius: 20px;
+
+    background:
+        rgba(239,68,68,0.9);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.5px;
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.status-box {
+
+    padding: 20px;
+
+    border-radius: 14px;
+
+    text-align: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            #172033,
+            #0f172a
+        );
+
+    border:
+        1px solid #334155;
+
+    margin-bottom: 15px;
+}
+
+
+.status-label {
+
+    font-size: 11px;
+
+    color: #94a3b8;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 7px;
+}
+
+
+.status-value {
+
+    font-size: 30px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+}
+
+
+.status-value.safe {
+
+    color: #22c55e;
+
+    text-shadow:
+        0 0 20px
+        rgba(34,197,94,0.35);
+}
+
+
+.status-value.alert {
+
+    color: #ef4444;
+
+    text-shadow:
+        0 0 20px
+        rgba(239,68,68,0.35);
+
+    animation:
+        alertPulse 1.2s infinite;
+}
+
+
+.status-value.calibrating {
+
+    color: #facc15;
+}
+
+
+@keyframes alertPulse {
+
+    0%, 100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.65;
+    }
+}
+
+
+/* =========================================================
+   EVENT
+   ========================================================= */
+
+.event-name {
+
+    font-size: 21px;
+
+    font-weight: 800;
+
+    margin-bottom: 8px;
+}
+
+
+.explanation {
+
+    color: #cbd5e1;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+
+    min-height: 60px;
+}
+
+
+/* =========================================================
+   METRICS
+   ========================================================= */
+
+.metrics {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 10px;
+
+    margin-top: 15px;
+}
+
+
+.metric {
+
+    background:
+        rgba(30,41,59,0.75);
+
+    border:
+        1px solid #273449;
+
+    border-radius: 12px;
+
+    padding: 13px;
+
+    transition:
+        transform 0.2s,
+        border-color 0.2s;
+}
+
+
+.metric:hover {
+
+    transform: translateY(-2px);
+
+    border-color: #475569;
+}
+
+
+.metric-label {
+
+    color: #64748b;
+
+    font-size: 10px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.8px;
+
+    margin-bottom: 6px;
+}
+
+
+.metric-value {
+
+    font-size: 18px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   CALIBRATION
+   ========================================================= */
+
+.calibration {
+
+    margin-top: 15px;
+
+    padding: 14px;
+
+    background:
+        rgba(30,41,59,0.6);
+
+    border-radius: 12px;
+}
+
+
+.calibration-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    font-size: 12px;
+
+    margin-bottom: 8px;
+}
+
+
+.progress {
+
+    height: 8px;
+
+    border-radius: 20px;
+
+    background: #1e293b;
+
+    overflow: hidden;
+}
+
+
+.progress-bar {
+
+    height: 100%;
+
+    width: 0%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #06b6d4,
+            #22c55e
+        );
+
+    transition:
+        width 0.3s ease;
+}
+
+
+/* =========================================================
+   THRESHOLDS
+   ========================================================= */
+
+.thresholds {
+
+    margin-top: 15px;
+
+    padding: 14px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(2,6,23,0.45);
+
+    border:
+        1px solid #1e293b;
+}
+
+
+.threshold-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 8px;
+}
+
+
+.threshold-item {
+
+    text-align: center;
+
+    padding: 9px;
+
+    background: #111827;
+
+    border-radius: 9px;
+}
+
+
+.threshold-item small {
+
+    display: block;
+
+    color: #64748b;
+
+    font-size: 9px;
+
+    margin-bottom: 3px;
+}
+
+
+.threshold-item strong {
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   LOWER GRID
+   ========================================================= */
+
+.lower-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 20px;
+
+    margin-top: 20px;
+}
+
+
+/* =========================================================
+   EVENT HISTORY
+   ========================================================= */
+
+.history {
+
+    max-height: 320px;
+
+    overflow-y: auto;
+}
+
+
+.history-item {
+
+    padding: 12px;
+
+    margin-bottom: 8px;
+
+    border-radius: 10px;
+
+    background: #111827;
+
+    border-left:
+        3px solid #ef4444;
+}
+
+
+.history-event {
+
+    font-weight: 800;
+
+    font-size: 13px;
+}
+
+
+.history-time {
+
+    color: #64748b;
+
+    font-size: 10px;
+
+    margin-top: 3px;
+}
+
+
+.history-reason {
+
+    color: #94a3b8;
+
+    font-size: 11px;
+
+    line-height: 1.4;
+
+    margin-top: 5px;
+}
+
+
+/* =========================================================
+   GALLERY
+   ========================================================= */
+
+.gallery {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fill,
+            minmax(210px, 1fr)
+        );
+
+    gap: 13px;
+}
+
+
+.capture {
+
+    background: #111827;
+
+    border:
+        1px solid #263244;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    transition:
+        transform 0.2s,
+        border-color 0.2s;
+}
+
+
+.capture:hover {
+
+    transform:
+        translateY(-3px);
+
+    border-color:
+        #64748b;
+}
+
+
+.capture img {
+
+    width: 100%;
+
+    height: 145px;
+
+    object-fit: cover;
+
+    display: block;
+
+    cursor: pointer;
+}
+
+
+.capture-info {
+
+    padding: 10px;
+}
+
+
+.capture-event {
+
+    color: #f87171;
+
+    font-weight: 800;
+
+    font-size: 12px;
+}
+
+
+.capture-time {
+
+    color: #64748b;
+
+    font-size: 10px;
+
+    margin-top: 5px;
+}
+
+
+.empty {
+
+    grid-column: 1 / -1;
+
+    text-align: center;
+
+    padding: 40px;
+
+    color: #475569;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media(max-width: 1050px) {
+
+    .main-grid {
+
+        grid-template-columns: 1fr;
+    }
+
+    .lower-grid {
+
+        grid-template-columns: 1fr;
+    }
+}
+
+
+@media(max-width: 600px) {
+
+    .container {
+
+        padding: 12px;
+    }
+
+    .header {
+
+        padding: 15px;
+    }
+
+    .logo-area h1 {
+
+        font-size: 19px;
+    }
+
+    .metrics {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .camera-container img {
+
+        min-height: 300px;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =======================================================
+     HEADER
+     ======================================================== -->
+
+<header class="header">
+
+    <div class="logo-area">
+
+        <h1>
+            🚗 DriverGuard AI
+        </h1>
+
+        <p>
+            Real-Time Driver Distraction &
+            Cognitive Risk Detection
+        </p>
+
+    </div>
+
+
+    <div
+        id="systemStatus"
+        class="system-status">
+
+        <span class="status-dot"></span>
+
+        <span id="connectionText">
+            CONNECTING
+        </span>
+
+    </div>
+
+</header>
+
+
+
+<main class="container">
+
+
+<!-- =======================================================
+     MAIN
+     ======================================================== -->
+
+<div class="main-grid">
+
+
+<!-- =======================================================
+     CAMERA
+     ======================================================== -->
+
+<div class="card">
+
+    <div class="card-title">
+
+        <span>
+            Live Driver Monitoring
+        </span>
+
+        <span
+            id="clock"
+            class="card-subtitle">
+            --:--:--
+        </span>
+
+    </div>
+
+
+    <div class="camera-container">
+
+        <img
+            id="video"
+            src="/video_feed"
+            alt="Live Driver Camera">
+
+        <div class="live-badge">
+            ● LIVE
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =======================================================
+     STATUS PANEL
+     ======================================================== -->
+
+<div class="card">
+
+    <div class="card-title">
+
+        <span>
+            Current Analysis
+        </span>
+
+        <span
+            id="confidence"
+            class="card-subtitle">
+            0%
+        </span>
+
+    </div>
+
+
+    <!-- STATUS -->
+
+    <div class="status-box">
+
+        <div class="status-label">
+            SYSTEM STATUS
+        </div>
+
+        <div
+            id="statusValue"
+            class="status-value calibrating">
+
+            STARTING
+
+        </div>
+
+    </div>
+
+
+    <!-- EVENT -->
+
+    <div
+        id="eventName"
+        class="event-name">
+
+        STARTING
+
+    </div>
+
+
+    <!-- EXPLANATION -->
+
+    <div
+        id="explanation"
+        class="explanation">
+
+        Starting driver monitoring system...
+
+    </div>
+
+
+    <!-- METRICS -->
+
+    <div class="metrics">
+
+
+        <div class="metric">
+
+            <div class="metric-label">
+                Head
+            </div>
+
+            <div
+                id="headDirection"
+                class="metric-value">
+
+                CENTER
+
+            </div>
+
+        </div>
+
+
+        <div class="metric">
+
+            <div class="metric-label">
+                Eye Gaze
+            </div>
+
+            <div
+                id="gaze"
+                class="metric-value">
+
+                CENTER
+
+            </div>
+
+        </div>
+
+
+        <div class="metric">
+
+            <div class="metric-label">
+                Pitch
+            </div>
+
+            <div
+                id="pitch"
+                class="metric-value">
+
+                0°
+
+            </div>
+
+        </div>
+
+
+        <div class="metric">
+
+            <div class="metric-label">
+                Yaw
+            </div>
+
+            <div
+                id="yaw"
+                class="metric-value">
+
+                0°
+
+            </div>
+
+        </div>
+
+
+        <div class="metric">
+
+            <div class="metric-label">
+                Roll
+            </div>
+
+            <div
+                id="roll"
+                class="metric-value">
+
+                0°
+
+            </div>
+
+        </div>
+
+
+        <div class="metric">
+
+            <div class="metric-label">
+                EAR
+            </div>
+
+            <div
+                id="ear"
+                class="metric-value">
+
+                -
+
+            </div>
+
+        </div>
+
+
+        <div class="metric">
+
+            <div class="metric-label">
+                Closed Frames
+            </div>
+
+            <div
+                id="closedFrames"
+                class="metric-value">
+
+                0
+
+            </div>
+
+        </div>
+
+
+        <div class="metric">
+
+            <div class="metric-label">
+                MAR
+            </div>
+
+            <div
+                id="mar"
+                class="metric-value">
+
+                0
+
+            </div>
+
+        </div>
+
+
+        <div class="metric">
+
+            <div class="metric-label">
+                Activity
+            </div>
+
+            <div
+                id="activity"
+                class="metric-value">
+
+                SafeDriving
+
+            </div>
+
+        </div>
+
+
+        <div class="metric">
+
+            <div class="metric-label">
+                Downward
+            </div>
+
+            <div
+                id="downward"
+                class="metric-value">
+
+                0 / 20
+
+            </div>
+
+        </div>
+
+
+        <div class="metric">
+
+            <div class="metric-label">
+                Head Frames
+            </div>
+
+            <div
+                id="headFrames"
+                class="metric-value">
+
+                0 / 3
+
+            </div>
+
+        </div>
+
+
+        <div class="metric">
+
+            <div class="metric-label">
+                Gaze Frames
+            </div>
+
+            <div
+                id="gazeFrames"
+                class="metric-value">
+
+                0 / 5
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CALIBRATION -->
+
+    <div class="calibration">
+
+        <div class="calibration-header">
+
+            <span>
+                Head Calibration
+            </span>
+
+            <span id="calibrationText">
+                0 / 45
+            </span>
+
+        </div>
+
+
+        <div class="progress">
+
+            <div
+                id="calibrationBar"
+                class="progress-bar">
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- THRESHOLDS -->
+
+    <div class="thresholds">
+
+        <div
+            class="card-title"
+            style="margin-bottom:10px">
+
+            <span>
+                Normal Driving Zone
+            </span>
+
+        </div>
+
+
+        <div class="threshold-grid">
+
+
+            <div class="threshold-item">
+
+                <small>
+                    LEFT / RIGHT
+                </small>
+
+                <strong>
+                    ±25°
+                </strong>
+
+            </div>
+
+
+            <div class="threshold-item">
+
+                <small>
+                    UP / DOWN
+                </small>
+
+                <strong>
+                    ±20°
+                </strong>
+
+            </div>
+
+
+            <div class="threshold-item">
+
+                <small>
+                    ALERT
+                </small>
+
+                <strong>
+                    3 frames
+                </strong>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+
+
+<!-- =======================================================
+     LOWER GRID
+     ======================================================== -->
+
+<div class="lower-grid">
+
+
+<!-- =======================================================
+     EVENT HISTORY
+     ======================================================== -->
+
+<div class="card">
+
+    <div class="card-title">
+
+        <span>
+            Event History
+        </span>
+
+        <span class="card-subtitle">
+            Recent alerts
+        </span>
+
+    </div>
+
+
+    <div
+        id="history"
+        class="history">
+
+        <div class="empty">
+            No events detected yet.
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =======================================================
+     EVIDENCE
+     ======================================================== -->
+
+<div class="card">
+
+    <div class="card-title">
+
+        <span>
+            Evidence Captures
+        </span>
+
+        <span
+            id="captureCount"
+            class="card-subtitle">
+
+            0 captures
+
+        </span>
+
+    </div>
+
+
+    <div
+        id="gallery"
+        class="gallery">
+
+        <div class="empty">
+            No captured events yet.
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+
+</main>
+
+
+
+<script>
+
+
+// ==========================================================
+// ELEMENTS
+// ==========================================================
+
+const statusValue =
+    document.getElementById(
+        "statusValue"
+    );
+
+const eventName =
+    document.getElementById(
+        "eventName"
+    );
+
+const explanation =
+    document.getElementById(
+        "explanation"
+    );
+
+const systemStatus =
+    document.getElementById(
+        "systemStatus"
+    );
+
+const connectionText =
+    document.getElementById(
+        "connectionText"
+    );
+
+const gallery =
+    document.getElementById(
+        "gallery"
+    );
+
+const history =
+    document.getElementById(
+        "history"
+    );
+
+
+// ==========================================================
+// SAFE VALUE
+// ==========================================================
+
+function value(
+    v,
+    fallback = "-"
+) {
+
+    if (
+        v === null ||
+        v === undefined ||
+        v === ""
+    ) {
+
+        return fallback;
+    }
+
+    return v;
+}
+
+
+// ==========================================================
+// STATUS
+// ==========================================================
+
+function updateStatus(data) {
+
+    const status =
+        value(
+            data.status,
+            "WAITING"
+        );
+
+
+    statusValue.textContent =
+        status;
+
+
+    statusValue.className =
+        "status-value";
+
+
+    if (
+        status === "SAFE"
+    ) {
+
+        statusValue.classList.add(
+            "safe"
+        );
+
+    }
+
+    else if (
+        status === "ALERT"
+    ) {
+
+        statusValue.classList.add(
+            "alert"
+        );
+
+    }
+
+    else {
+
+        statusValue.classList.add(
+            "calibrating"
+        );
+    }
+
+
+    eventName.textContent =
+        value(
+            data.event,
+            "SAFE"
+        );
+
+
+    explanation.textContent =
+        value(
+            data.explanation,
+            ""
+        );
+
+
+    // ======================================================
+    // HEAD
+    // ======================================================
+
+    document.getElementById(
+        "headDirection"
+    ).textContent =
+        value(
+            data.head_direction,
+            "CENTER"
+        );
+
+
+    document.getElementById(
+        "pitch"
+    ).textContent =
+        `${value(data.delta_pitch, 0)}°`;
+
+
+    document.getElementById(
+        "yaw"
+    ).textContent =
+        `${value(data.delta_yaw, 0)}°`;
+
+
+    document.getElementById(
+        "roll"
+    ).textContent =
+        `${value(data.delta_roll, 0)}°`;
+
+
+    document.getElementById(
+        "headFrames"
+    ).textContent =
+        `${value(data.head_frames, 0)} / 3`;
+
+
+    // ======================================================
+    // GAZE
+    // ======================================================
+
+    document.getElementById(
+        "gaze"
+    ).textContent =
+        value(
+            data.gaze_direction,
+            "CENTER"
+        );
+
+
+    document.getElementById(
+        "gazeFrames"
+    ).textContent =
+        `${value(data.gaze_frames, 0)} / 5`;
+
+
+    // ======================================================
+    // EYES
+    // ======================================================
+
+    document.getElementById(
+        "ear"
+    ).textContent =
+        value(
+            data.ear,
+            "-"
+        );
+
+
+    document.getElementById(
+        "closedFrames"
+    ).textContent =
+        value(
+            data.closed_frames,
+            0
+        );
+
+
+    // ======================================================
+    // MOUTH
+    // ======================================================
+
+    document.getElementById(
+        "mar"
+    ).textContent =
+        value(
+            data.mar,
+            0
+        );
+
+
+    // ======================================================
+    // ACTIVITY
+    // ======================================================
+
+    document.getElementById(
+        "activity"
+    ).textContent =
+        value(
+            data.activity,
+            "SafeDriving"
+        );
+
+
+    // ======================================================
+    // DOWNWARD
+    // ======================================================
+
+    document.getElementById(
+        "downward"
+    ).textContent =
+
+        `${value(
+            data.downward_count,
+            0
+        )} / ${value(
+            data.downward_window,
+            20
+        )}`;
+
+
+    // ======================================================
+    // CONFIDENCE
+    // ======================================================
+
+    document.getElementById(
+        "confidence"
+    ).textContent =
+        `${value(
+            data.confidence,
+            0
+        )}%`;
+
+
+    // ======================================================
+    // CALIBRATION
+    // ======================================================
+
+    const calibrationFrames =
+        Number(
+            value(
+                data.calibration_frames,
+                0
+            )
+        );
+
+    const calibrationRequired =
+        Number(
+            value(
+                data.calibration_required,
+                45
+            )
+        );
+
+
+    const percentage =
+        Math.min(
+            100,
+            (
+                calibrationFrames
+                / calibrationRequired
+            ) * 100
+        );
+
+
+    document.getElementById(
+        "calibrationText"
+    ).textContent =
+        `${calibrationFrames} / ${calibrationRequired}`;
+
+
+    document.getElementById(
+        "calibrationBar"
+    ).style.width =
+        `${percentage}%`;
+
+
+    // ======================================================
+    // CONNECTION
+    // ======================================================
+
+    systemStatus.classList.add(
+        "connected"
+    );
+
+    connectionText.textContent =
+        "SYSTEM ONLINE";
+
+
+    // ======================================================
+    // EVENT HISTORY
+    // ======================================================
+
+    updateHistory(
+        data.event_history || []
+    );
+}
+
+
+// ==========================================================
+// EVENT HISTORY
+// ==========================================================
+
+function updateHistory(events) {
+
+    if (
+        !Array.isArray(events) ||
+        events.length === 0
+    ) {
+
+        history.innerHTML = `
+            <div class="empty">
+                No events detected yet.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    history.innerHTML = "";
+
+
+    events.forEach(
+        item => {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "history-item";
+
+
+            const event =
+                document.createElement(
+                    "div"
+                );
+
+            event.className =
+                "history-event";
+
+            event.textContent =
+                item.event ||
+                "EVENT";
+
+
+            const time =
+                document.createElement(
+                    "div"
+                );
+
+            time.className =
+                "history-time";
+
+            time.textContent =
+                item.time ||
+                "";
+
+
+            const reason =
+                document.createElement(
+                    "div"
+                );
+
+            reason.className =
+                "history-reason";
+
+            reason.textContent =
+                item.explanation ||
+                "";
+
+
+            div.appendChild(event);
+
+            div.appendChild(time);
+
+            div.appendChild(reason);
+
+            history.appendChild(div);
+        }
+    );
+}
+
+
+// ==========================================================
+// CAPTURE CARD
+// ==========================================================
+
+function createCaptureCard(
+    capture
+) {
+
+    const card =
+        document.createElement(
+            "div"
+        );
+
+    card.className =
+        "capture";
+
+
+    card.dataset.filename =
+        capture.filename;
+
+
+    const image =
+        document.createElement(
+            "img"
+        );
+
+
+    image.src =
+        capture.url;
+
+
+    image.alt =
+        capture.event ||
+        "Captured event";
+
+
+    image.loading =
+        "lazy";
+
+
+    image.onclick =
+        function() {
+
+            window.open(
+                capture.url,
+                "_blank"
+            );
+        };
+
+
+    const info =
+        document.createElement(
+            "div"
+        );
+
+
+    info.className =
+        "capture-info";
+
+
+    const event =
+        document.createElement(
+            "div"
+        );
+
+
+    event.className =
+        "capture-event";
+
+
+    event.textContent =
+        capture.event ||
+        "EVENT";
+
+
+    const time =
+        document.createElement(
+            "div"
+        );
+
+
+    time.className =
+        "capture-time";
+
+
+    time.textContent =
+        capture.time ||
+        "";
+
+
+    info.appendChild(event);
+
+    info.appendChild(time);
+
+    card.appendChild(image);
+
+    card.appendChild(info);
+
+
+    return card;
+}
+
+
+// ==========================================================
+// UPDATE GALLERY
+//
+// IMPORTANT:
+//
+// We DO NOT rebuild the gallery every 3 seconds.
+//
+// Existing image elements stay in the DOM.
+//
+// Only new captures are inserted.
+//
+// This prevents the image flickering effect.
+// ==========================================================
+
+function updateGallery(
+    captures
+) {
+
+    if (
+        !Array.isArray(captures)
+    ) {
+
+        return;
+    }
+
+
+    const valid =
+        captures.filter(
+            capture =>
+                capture &&
+                capture.filename &&
+                capture.url
+        );
+
+
+    const existing =
+        new Set();
+
+
+    gallery
+        .querySelectorAll(
+            ".capture"
+        )
+        .forEach(
+            card => {
+
+                if (
+                    card.dataset.filename
+                ) {
+
+                    existing.add(
+                        card.dataset.filename
+                    );
+                }
+            }
+        );
+
+
+    const empty =
+        gallery.querySelector(
+            ".empty"
+        );
+
+
+    if (
+        empty &&
+        valid.length > 0
+    ) {
+
+        empty.remove();
+    }
+
+
+    // Newest first.
+    valid
+        .slice()
+        .reverse()
+        .forEach(
+            capture => {
+
+                if (
+                    existing.has(
+                        capture.filename
+                    )
+                ) {
+
+                    return;
+                }
+
+
+                const card =
+                    createCaptureCard(
+                        capture
+                    );
+
+
+                gallery.prepend(
+                    card
+                );
+            }
+        );
+
+
+    document.getElementById(
+        "captureCount"
+    ).textContent =
+        `${valid.length} capture${valid.length === 1 ? "" : "s"}`;
+
+
+    if (
+        valid.length === 0 &&
+        gallery.children.length === 0
+    ) {
+
+        gallery.innerHTML = `
+            <div class="empty">
+                No captured events yet.
+            </div>
+        `;
+    }
+}
+
+
+// ==========================================================
+// LOAD STATUS
+// ==========================================================
+
+async function loadStatus() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/status",
+                {
+                    cache:
+                        "no-store"
+                }
+            );
+
+
+        if (
+            !response.ok
+        ) {
+
+            throw new Error(
+                "Status request failed"
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        updateStatus(
+            data
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Status error:",
+            error
+        );
+
+
+        systemStatus.classList.remove(
+            "connected"
+        );
+
+
+        connectionText.textContent =
+            "DISCONNECTED";
+    }
+}
+
+
+// ==========================================================
+// LOAD CAPTURES
+// ==========================================================
+
+async function loadCaptures() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/captures_list",
+                {
+                    cache:
+                        "no-store"
+                }
+            );
+
+
+        if (
+            !response.ok
+        ) {
+
+            return;
+        }
+
+
+        const data =
+            await response.json();
+
+
+        updateGallery(
+            data.captures || []
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Capture error:",
+            error
+        );
+    }
+}
+
+
+// ==========================================================
+// CLOCK
+// ==========================================================
+
+function updateClock() {
+
+    const now =
+        new Date();
+
+
+    document.getElementById(
+        "clock"
+    ).textContent =
+        now.toLocaleTimeString();
+}
+
+
+// ==========================================================
+// START
+// ==========================================================
+
+loadStatus();
+
+loadCaptures();
+
+updateClock();
+
+
+// Status updates frequently.
+
+setInterval(
+    loadStatus,
+    500
+);
+
+
+// Captures update less frequently.
+
+setInterval(
+    loadCaptures,
+    3000
+);
+
+
+// Clock.
+
+setInterval(
+    updateClock,
+    1000
+);
+
+</script>
+
+
+</body>
+
+</html>
